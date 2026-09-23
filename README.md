@@ -1,1 +1,1 @@
-<img src="README_IMG.jpg" alt="README_IMG.jpg">
+<img src="README-IMG.jpg" alt="README_IMG.jpg">
