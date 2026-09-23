@@ -76,12 +76,19 @@ class AudioEngine(private val appContext: Context) {
     }
 
     private fun pickIndexAvoidRepeat(size: Int, isTexture: Boolean): Int {
-        if (size == 1) return 0
+        if (size <= 1) return 0
 
-        var idx: Int
-        do {
-            idx = Random.nextInt(size)
-        } while ((isTexture && idx == lastTextureIndex) || (!isTexture && idx == lastMelodyIndex))
+        val last = if (isTexture) lastTextureIndex else lastMelodyIndex
+
+        // Pick uniformly from the size-1 indices that are not `last`.
+        // The old do/while retry could spin arbitrarily long (worst case:
+        // forever) when the random pick kept landing on `last`; this is O(1).
+        val idx = if (last !in 0 until size) {
+            Random.nextInt(size)
+        } else {
+            val offset = Random.nextInt(size - 1)
+            if (offset < last) offset else offset + 1
+        }
 
         if (isTexture) lastTextureIndex = idx else lastMelodyIndex = idx
         return idx
